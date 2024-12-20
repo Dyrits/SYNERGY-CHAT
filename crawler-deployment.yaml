@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: synergychat-crawler
+  name: synergychat-crawler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synergychat-crawler
+  template:
+    metadata:
+      labels:
+        app: synergychat-crawler
+    spec:
+      containers:
+        - image: bootdotdev/synergychat-crawler:latest
+          name: synergychat-crawler-1
+          envFrom:
+            - configMapRef:
+                name: synergychat-crawler-configmap
+          env:
+            - name: CRAWLER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: synergychat-crawler-configmap
+                  key: CRAWLER_PORT_1
+          volumeMounts:
+            - name: cache-volume
+              mountPath: /cache
+        - image: bootdotdev/synergychat-crawler:latest
+          name: synergychat-crawler-2
+          envFrom:
+            - configMapRef:
+                name: synergychat-crawler-configmap
+          env:
+            - name: CRAWLER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: synergychat-crawler-configmap
+                  key: CRAWLER_PORT_2
+          volumeMounts:
+            - name: cache-volume
+              mountPath: /cache
+        - image: bootdotdev/synergychat-crawler:latest
+          name: synergychat-crawler-3
+          envFrom:
+            - configMapRef:
+                name: synergychat-crawler-configmap
+          env:
+            - name: CRAWLER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: synergychat-crawler-configmap
+                  key: CRAWLER_PORT_3
+          volumeMounts:
+            - name: cache-volume
+              mountPath: /cache
+      volumes:
+        - name: cache-volume
+          emptyDir: { }
