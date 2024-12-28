@@ -3,12 +3,18 @@ minikube:
 	minikube dashboard --port=63840
 
 deploy:
+	# kubectl create ns crawler
 	kubectl apply -f web-configmap.yaml
 	kubectl apply -f api-configmap.yaml
 	kubectl apply -f crawler-configmap.yaml
+	kubectl apply -f testram-configmap.yaml
+	kubectl apply -f web-hpa.yaml
+	kubectl apply -f testcpu-hpa.yaml
 	kubectl apply -f web-deployment.yaml --force
 	kubectl apply -f api-deployment.yaml --force
 	kubectl apply -f crawler-deployment.yaml --force
+	kubectl apply -f testcpu-deployment.yaml --force
+	kubectl apply -f testram-deployment.yaml --force
 	kubectl apply -f web-service.yaml
 	kubectl apply -f api-service.yaml
 	kubectl apply -f crawler-service.yaml
@@ -18,7 +24,9 @@ deploy:
 serve:
 	kubectl proxy
 
+add-ons:
+	minikube addons enable ingress
+	minikube addons enable metrics-server
 
 tunnel:
-	minikube addons enable ingress
 	minikube tunnel -c
